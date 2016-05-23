@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试selection</title>
+
+    <script src="selectDom.js"></script>
+
+</head>
+<body>
+    <button id="btn">选中</button>
+    <div id="content">
+        <ul>
+            <li>java</li>
+            <li>python</li>
+            <li>golang</li>
+            <li>html</li>
+        </ul>
+    </div>
+    <script>
+
+        document.getElementById("btn").onclick = function(){
+            selectTheDom(document.getElementById("content"));
+        }
+    </script>
+</body>
+</html>
