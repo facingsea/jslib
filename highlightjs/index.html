@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test highlight js</title>
+    <script src="../lib/jquery-1.12.1.js"></script>
+    <!--
+    <link rel="stylesheet" href="./lib/highlight.js-9.4.0/src/styles/default.css">
+
+    <link rel="stylesheet" href="./lib/highlight.js-9.4.0/src/styles/idea.css">
+    <script src="./lib/highlight.js-9.4.0/src/highlight.js"></script>
+    -->
+    <link rel="stylesheet" href="./lib/highlight/styles/default.css">
+    <script src="./lib/highlight/highlight.pack.js"></script>
+    <!--<script>hljs.initHighlightingOnLoad()</script>-->
+    <script src="./lib/vkBeautify-master/vkbeautify.js"></script>
+    <script>
+        $(document).ready(function(){
+            var xml = '<?xml version="1.0" encoding="UTF-8"?> ' +
+                        '<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
+                        '<note> ' +
+                            '<to>George</to> ' +
+                            '<from>John</from> ' +
+                            '<heading>Reminder</heading> ' +
+                            '<body>Don\'t forget the meeting!</body> ' +
+                        '</note>';
+
+            $("#code-content").text(vkbeautify.xml(xml));
+            $("#code-content").each(function(i, e){
+                console.log(e);
+                hljs.highlightBlock(e);
+            });
+        })
+
+    </script>
+
+</head>
+<body>
+<div contenteditable="true">
+    <pre><code class="xml" id="code-content"></code></pre>
+</div>
+</body>
+</html>
