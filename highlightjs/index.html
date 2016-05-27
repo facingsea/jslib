@@ -10,7 +10,16 @@
     <link rel="stylesheet" href="./lib/highlight.js-9.4.0/src/styles/idea.css">
     <script src="./lib/highlight.js-9.4.0/src/highlight.js"></script>
     -->
-    <link rel="stylesheet" href="./lib/highlight/styles/default.css">
+    <link rel="stylesheet" href="./lib/highlight/styles/vs.css">
+
+    <style>
+        .code-font-cls{
+            font-size: 15px;
+            font-family: "Source Code Pro", "Courier New", Consolas;
+        }
+
+    </style>
+
     <script src="./lib/highlight/highlight.pack.js"></script>
     <!--<script>hljs.initHighlightingOnLoad()</script>-->
     <script src="./lib/vkBeautify-master/vkbeautify.js"></script>
@@ -18,7 +27,7 @@
         $(document).ready(function(){
             var xml = '<?xml version="1.0" encoding="UTF-8"?> ' +
                         '<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
-                        '<note> ' +
+                        '<note name="zhangsan"> ' +
                             '<to>George</to> ' +
                             '<from>John</from> ' +
                             '<heading>Reminder</heading> ' +
@@ -36,8 +45,8 @@
 
 </head>
 <body>
-<div contenteditable="true">
-    <pre><code class="xml" id="code-content"></code></pre>
+<div contenteditable="true" spellcheck="false">
+    <pre><code class="xml code-font-cls" id="code-content"></code></pre>
 </div>
 </body>
 </html>
