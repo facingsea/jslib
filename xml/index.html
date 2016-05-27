@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>测试js解析xml并显示</title>
+
+    <script src="../lib/jquery-1.12.1.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            var xml = '<?xml version="1.0" encoding="UTF-8"?> ' +
+                    '<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
+                    // '<introduce><![CDATA[This is the content]]></introduce>' +
+                    '<note name="zhangsan"> ' +
+                    '<to>George</to> ' +
+                    '<from>John</from> ' +
+                    '<heading>Reminder</heading> ' +
+                    '<body>Don\'t forget the meeting!</body> ' +
+                    '</note>';
+            //xml = xml.replace( /\]\]>/g, ' ]]>' );
+            var xmlNode = parseXML(xml);
+            console.log(xmlNode);
+            console.dir(xmlNode);
+            var html = "";
+            processNode(xmlNode, html);
+        });
+
+        /**
+         * 解析xml
+         * @param ele
+         */
+        function processNode(ele, html){
+//            if(ele.xmlVersion){
+//                var childNodes = ele.childNodes;
+//                if(childNodes && childNodes.length > 0){
+//                    for(var i = 0; i < childNodes.length; i++){
+//                        processNode(childNodes[i], html);
+//                    }
+//                }
+//            }else{
+                var nodeName = ele.nodeName;
+                var nodeType = ele.nodeType;
+                var nodeValue = ele.nodeValue;
+                if(nodeType == 1){ // element_node
+                    html += '<div class="xml-element-node"></div>';
+                }else if(nodeType == 2){ // attribute_node
+
+                }else if(nodeType == 3){ // text_node
+
+                }else if(nodeType == 4){ // cdata_section_node
+
+                }else if(nodeType == 5){ // entity_reference_node
+
+                }else if(nodeType == 6){ // entity_node
+
+                }else if(nodeType == 7){ // processing_instruction_node
+
+                }else if(nodeType == 8){ // comment_node
+                    html += '<div class="xml-comment">&lt;-- '+nodeValue+' --&gt;</div>';
+                }else if(nodeType == 9){ // document_node
+
+                }else if(nodeType == 10){ // document_type_node
+
+                }else if(nodeType == 11){ // document_fragment_node
+
+                }else if(nodeType == 12){ // notation_node
+
+                }
+
+                var childNodes = ele.childNodes;
+                if(childNodes && childNodes.length > 0){
+                    for(var i = 0; i < childNodes.length; i++){
+                        processNode(childNodes[i], html);
+                    }
+                }
+
+            //}
+        }
+
+        var parseXML = function( data ) {
+            var xml, tmp;
+            if ( !data || typeof data !== "string" ) {
+                return null;
+            }
+            try {
+                if ( window.DOMParser ) { // Standard
+                    tmp = new window.DOMParser();
+                    xml = tmp.parseFromString( data, "text/xml" );
+                } else { // IE
+                    xml = new window.ActiveXObject( "Microsoft.XMLDOM" );
+                    xml.async = "false";
+                    xml.loadXML( data );
+                }
+            } catch ( e ) {
+                xml = undefined;
+            }
+            if ( !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length ) {
+                console.error(xml.getElementsByTagName( "parsererror" )[0].textContent);
+            }
+            return xml;
+        };
+
+    </script>
+
+</head>
+<body>
+
+</body>
+</html>
