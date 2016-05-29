@@ -3,78 +3,120 @@
 <head>
     <meta charset="UTF-8">
     <title>测试js解析xml并显示</title>
-
+    <link rel="stylesheet" href="./style.css">
     <script src="../lib/jquery-1.12.1.js"></script>
 
     <script>
         $(document).ready(function(){
+
             var xml = '<?xml version="1.0" encoding="UTF-8"?> ' +
                     '<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
-                    // '<introduce><![CDATA[This is the content]]></introduce>' +
                     '<note name="zhangsan"> ' +
-                    '<to>George</to> ' +
-                    '<from>John</from> ' +
-                    '<heading>Reminder</heading> ' +
-                    '<body>Don\'t forget the meeting!</body> ' +
+                        '<introduce><![CDATA[This is the content]]></introduce>' +
+                        '<to>George</to> ' +
+                        '<from>John</from> ' +
+                        '<heading>Reminder</heading> ' +
+                        '<body>Don\'t forget the meeting!</body> ' +
                     '</note>';
             //xml = xml.replace( /\]\]>/g, ' ]]>' );
             var xmlNode = parseXML(xml);
             console.log(xmlNode);
             console.dir(xmlNode);
-            var html = "";
-            processNode(xmlNode, html);
+
+            var html = processNode(xmlNode, "", -1);
+            console.log("html: " + html);
+            $("#show-content").html(html);
         });
 
+        var html2 = "";
         /**
          * 解析xml
          * @param ele
          */
-        function processNode(ele, html){
-//            if(ele.xmlVersion){
-//                var childNodes = ele.childNodes;
-//                if(childNodes && childNodes.length > 0){
-//                    for(var i = 0; i < childNodes.length; i++){
-//                        processNode(childNodes[i], html);
-//                    }
-//                }
-//            }else{
-                var nodeName = ele.nodeName;
-                var nodeType = ele.nodeType;
-                var nodeValue = ele.nodeValue;
-                if(nodeType == 1){ // element_node
-                    html += '<div class="xml-element-node"></div>';
-                }else if(nodeType == 2){ // attribute_node
+        function processNode(ele, html, step){
+            step++;
 
-                }else if(nodeType == 3){ // text_node
-
-                }else if(nodeType == 4){ // cdata_section_node
-
-                }else if(nodeType == 5){ // entity_reference_node
-
-                }else if(nodeType == 6){ // entity_node
-
-                }else if(nodeType == 7){ // processing_instruction_node
-
-                }else if(nodeType == 8){ // comment_node
-                    html += '<div class="xml-comment">&lt;-- '+nodeValue+' --&gt;</div>';
-                }else if(nodeType == 9){ // document_node
-
-                }else if(nodeType == 10){ // document_type_node
-
-                }else if(nodeType == 11){ // document_fragment_node
-
-                }else if(nodeType == 12){ // notation_node
-
+            var nodeName = ele.nodeName;
+            var nodeType = ele.nodeType;
+            var nodeValue = ele.nodeValue;
+            if(nodeType == 1){ // element_node
+                html += '<div class="line">' +
+                            '<span class="button collapse-button"></span>' +
+                            '<span class="xml-tag">' +
+                                '<span class="xml-tag-sign">&lt;</span>' +
+                                '<span class="xml-tag-name">'+nodeName+'</span>';
+                if(ele.attributes.length > 0){
+                    for(var i = 0; i < ele.attributes.length; i++){
+                        var attr = ele.attributes[i];
+                        html += '<span class="xml-attribute">' +
+                                    '<span class="xml-attribute-name">'+attr.nodeName+'</span>' +
+                                    '<span class="xml-sign">=</span>' +
+                                    '<span class="xml-quote">"</span>' +
+                                    '<span class="xml-attribute-value">'+attr.nodeValue+'</span>' +
+                                    '<span class="xml-quote">"</span>' +
+                                '</span>';
+                    }
                 }
-
+                html += '<span class="xml-tag-sign">&gt;</span>';
                 var childNodes = ele.childNodes;
                 if(childNodes && childNodes.length > 0){
                     for(var i = 0; i < childNodes.length; i++){
-                        processNode(childNodes[i], html);
+                        processNode(childNodes[i], html, step);
                     }
                 }
 
-            //}
+                html += '</span>' + '</div>';
+                console.log("last: " + html)
+            }else if(nodeType == 2){ // attribute_node
+
+            }else if(nodeType == 3){ // text_node
+
+            }else if(nodeType == 4){ // cdata_section_node
+
+            }else if(nodeType == 5){ // entity_reference_node
+
+            }else if(nodeType == 6){ // entity_node
+
+            }else if(nodeType == 7){ // processing_instruction_node
+
+            }else if(nodeType == 8){ // comment_node
+                html += '<div class="xml-line"><span class="comment xml-comment">'+nodeValue+'</span></div>';
+            }else if(nodeType == 9){ // document_node
+                // start document
+                html += '<div class="xml-line">' +
+                            '<span>' +
+                                '<span class="xml-tag-sign">&lt;</span>' +
+                                '? xml ' +
+                                '<span class="xml-attribute">' +
+                                    '<span class="xml-attribute-name">version</span>' +
+                                    '<span class="xml-sign">=</span>' +
+                                    '<span class="xml-quote">"</span>' +
+                                    '<span class="xml-attribute-value">'+ele.xmlVersion+'</span>' +
+                                    '<span class="xml-quote">"</span>' +
+                                    '<span class="xml-attribute-name">encoding</span>' +
+                                    '<span class="xml-sign">=</span>' +
+                                    '<span class="xml-quote">"</span>' +
+                                    '<span class="xml-attribute-value">'+ele.xmlEncoding+'</span>' +
+                                    '<span class="xml-quote">"</span>' +
+                                '</span>' +
+                                '?' +
+                            '<span class="xml-tag-sign">&gt;</span>' +
+                            '</span>' +
+                        '</div>';
+                var childNodes = ele.childNodes;
+                if(childNodes && childNodes.length > 0){
+                    for(var i = 0; i < childNodes.length; i++){
+                        processNode(childNodes[i], html, step);
+                    }
+                }
+            }else if(nodeType == 10){ // document_type_node
+
+            }else if(nodeType == 11){ // document_fragment_node
+
+            }else if(nodeType == 12){ // notation_node
+
+            }
+            return html;
         }
 
         var parseXML = function( data ) {
@@ -104,6 +146,67 @@
 
 </head>
 <body>
+
+
+<div id="show-content"></div>
+
+
+
+
+
+
+
+
+
+
+<!--
+<div xmlns="http://www.w3.org/1999/xhtml" class="pretty-print">
+    <div class="line"><span class="comment html-comment">&lt;!--  Edited with XML Spy v2007 (http://www.altova.com)  --&gt;</span>
+    </div>
+    <div class="collapsible" id="collapsible0">
+        <div class="expanded">
+            <div class="line"><span class="button collapse-button"></span><span class="html-tag">&lt;note<span
+                    class="html-attribute"> <span class="html-attribute-name">name</span>="<span
+                    class="html-attribute-value">zhangsan</span>"</span>&gt;</span></div>
+            <div class="collapsible-content"><span class="text"></span>
+                <div class="collapsible" id="collapsible1">
+                    <div class="expanded">
+                        <div class="line"><span class="button collapse-button"></span><span class="html-tag">&lt;introduce&gt;</span>
+                        </div>
+                        <div class="collapsible-content"><span class="text"></span>
+                            <div class="line"><span class="text">&lt;![CDATA[ This is the content ]]&gt;</span></div>
+                            <span class="text"></span></div>
+                        <div class="line"><span class="html-tag">&lt;/introduce&gt;</span></div>
+                    </div>
+                    <div class="collapsed hidden">
+                        <div class="line"><span class="button expand-button"></span><span class="html-tag">&lt;introduce&gt;</span><span
+                                class="text">...</span><span class="html-tag">&lt;/introduce&gt;</span></div>
+                    </div>
+                </div>
+                <span class="text"></span>
+                <div class="line"><span class="html-tag">&lt;to&gt;</span><span class="text">George</span><span
+                        class="html-tag">&lt;/to&gt;</span></div>
+                <span class="text"></span>
+                <div class="line"><span class="html-tag">&lt;from&gt;</span><span class="text">John</span><span
+                        class="html-tag">&lt;/from&gt;</span></div>
+                <span class="text"></span>
+                <div class="line"><span class="html-tag">&lt;heading&gt;</span><span class="text">Reminder</span><span
+                        class="html-tag">&lt;/heading&gt;</span></div>
+                <span class="text"></span>
+                <div class="line"><span class="html-tag">&lt;body&gt;</span><span
+                        class="text">Don\t forget the meeting!</span><span class="html-tag">&lt;/body&gt;</span></div>
+                <span class="text"></span></div>
+            <div class="line"><span class="html-tag">&lt;/note&gt;</span></div>
+        </div>
+        <div class="collapsed hidden">
+            <div class="line"><span class="button expand-button"></span><span class="html-tag">&lt;note<span
+                    class="html-attribute"> <span class="html-attribute-name">name</span>="<span
+                    class="html-attribute-value">zhangsan</span>"</span>&gt;</span><span class="text">...</span><span
+                    class="html-tag">&lt;/note&gt;</span></div>
+        </div>
+    </div>
+</div>
+-->
 
 </body>
 </html>
