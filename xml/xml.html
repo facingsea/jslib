@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>xml process</title>
+    <link rel="stylesheet" href="./xmlTreeViewer.css">
+    <link rel="stylesheet" href="./view-source.css">
+
+    <script src="xmlTreeViewer.js"></script>
+    <script src="../lib/jquery-1.12.1.js"></script>
+
+    <script>
+
+        $(document).ready(function(){
+            var xml = '<?xml version="1.0" encoding="UTF-8"?> ' +
+                        '<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
+                        '<note name="zhangsan"> ' +
+                        '<introduce><![CDATA[This is the content]]></introduce>' +
+                            '<to>George</to> ' +
+                            '<from>John</from> ' +
+                            '<heading>Reminder</heading> ' +
+                            '<body>Don\'t forget the meeting!</body> ' +
+                        '</note>';
+            //xml = xml.replace( /\]\]>/g, ' ]]>' );
+            var xmlNode = parseXML(xml);
+            documentNode = xmlNode;
+            prepareWebKitXMLViewer("");
+        });
+
+
+
+        // parse xml.
+        var parseXML = function( data ) {
+            var xml, tmp;
+            if ( !data || typeof data !== "string" ) {
+                return null;
+            }
+            try {
+                if ( window.DOMParser ) { // Standard
+                    tmp = new window.DOMParser();
+                    xml = tmp.parseFromString( data, "text/xml" );
+                } else { // IE
+                    xml = new window.ActiveXObject( "Microsoft.XMLDOM" );
+                    xml.async = "false";
+                    xml.loadXML( data );
+                }
+            } catch ( e ) {
+                xml = undefined;
+            }
+            if ( !xml || !xml.documentElement || xml.getElementsByTagName( "parsererror" ).length ) {
+                console.error(xml.getElementsByTagName( "parsererror" )[0].textContent);
+            }
+            return xml;
+        };
+    </script>
+
+
+</head>
+<body>
+    <div id="xml-aaa"></div>
+</body>
+</html>

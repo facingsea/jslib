@@ -10,13 +10,13 @@
         $(document).ready(function(){
 
             var xml = '<?xml version="1.0" encoding="UTF-8"?> ' +
-                    '<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
+                    //'<!-- Edited with XML Spy v2007 (http://www.altova.com) --> ' +
                     '<note name="zhangsan"> ' +
                         '<introduce><![CDATA[This is the content]]></introduce>' +
-                        '<to>George</to> ' +
-                        '<from>John</from> ' +
-                        '<heading>Reminder</heading> ' +
-                        '<body>Don\'t forget the meeting!</body> ' +
+                        //'<to>George</to> ' +
+                        //'<from>John</from> ' +
+                        //'<heading>Reminder</heading> ' +
+                        //'<body>Don\'t forget the meeting!</body> ' +
                     '</note>';
             //xml = xml.replace( /\]\]>/g, ' ]]>' );
             var xmlNode = parseXML(xml);
@@ -34,13 +34,16 @@
          * @param ele
          */
         function processNode(ele, html, step){
+            //console.log("start: ====");
+            //console.log(html);
+            var newHtml = "";
             step++;
 
             var nodeName = ele.nodeName;
             var nodeType = ele.nodeType;
             var nodeValue = ele.nodeValue;
             if(nodeType == 1){ // element_node
-                html += '<div class="line">' +
+                newHtml += '<div class="line">' +
                             '<span class="button collapse-button"></span>' +
                             '<span class="xml-tag">' +
                                 '<span class="xml-tag-sign">&lt;</span>' +
@@ -48,7 +51,7 @@
                 if(ele.attributes.length > 0){
                     for(var i = 0; i < ele.attributes.length; i++){
                         var attr = ele.attributes[i];
-                        html += '<span class="xml-attribute">' +
+                        newHtml += '<span class="xml-attribute">' +
                                     '<span class="xml-attribute-name">'+attr.nodeName+'</span>' +
                                     '<span class="xml-sign">=</span>' +
                                     '<span class="xml-quote">"</span>' +
@@ -57,16 +60,16 @@
                                 '</span>';
                     }
                 }
-                html += '<span class="xml-tag-sign">&gt;</span>';
+                newHtml += '<span class="xml-tag-sign">&gt;</span>';
                 var childNodes = ele.childNodes;
                 if(childNodes && childNodes.length > 0){
                     for(var i = 0; i < childNodes.length; i++){
-                        processNode(childNodes[i], html, step);
+                        newHtml += processNode(childNodes[i], html, step);
                     }
                 }
 
-                html += '</span>' + '</div>';
-                console.log("last: " + html)
+                newHtml += '</span>' + '</div>';
+                //console.log("last: " + html)
             }else if(nodeType == 2){ // attribute_node
 
             }else if(nodeType == 3){ // text_node
@@ -80,10 +83,10 @@
             }else if(nodeType == 7){ // processing_instruction_node
 
             }else if(nodeType == 8){ // comment_node
-                html += '<div class="xml-line"><span class="comment xml-comment">'+nodeValue+'</span></div>';
+                newHtml += '<div class="xml-line"><span class="comment xml-comment">'+nodeValue+'</span></div>';
             }else if(nodeType == 9){ // document_node
                 // start document
-                html += '<div class="xml-line">' +
+                newHtml += '<div class="xml-line">' +
                             '<span>' +
                                 '<span class="xml-tag-sign">&lt;</span>' +
                                 '? xml ' +
@@ -106,7 +109,7 @@
                 var childNodes = ele.childNodes;
                 if(childNodes && childNodes.length > 0){
                     for(var i = 0; i < childNodes.length; i++){
-                        processNode(childNodes[i], html, step);
+                        newHtml += processNode(childNodes[i], html, step);
                     }
                 }
             }else if(nodeType == 10){ // document_type_node
@@ -116,7 +119,7 @@
             }else if(nodeType == 12){ // notation_node
 
             }
-            return html;
+            return newHtml;
         }
 
         var parseXML = function( data ) {
