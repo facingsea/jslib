@@ -6,7 +6,8 @@
     <link rel="stylesheet" href="./xmlTreeViewer.css">
     <link rel="stylesheet" href="./view-source.css">
 
-    <script src="xmlTreeViewer.js"></script>
+    <!--<script src="xmlTreeViewer.js"></script>-->
+    <script src="XMLTreeViewerUtil.js"></script>
     <script src="../lib/jquery-1.12.1.js"></script>
 
     <script>
@@ -23,8 +24,10 @@
                         '</note>';
             //xml = xml.replace( /\]\]>/g, ' ]]>' );
             var xmlNode = parseXML(xml);
-            documentNode = xmlNode;
-            prepareWebKitXMLViewer("");
+            //documentNode = xmlNode;
+            var retNode = XMLTreeViewerUtil.getXMLViewerNode(xmlNode);
+            //$("#xml-aaa").append(html);
+            document.getElementById("xml-aaa").appendChild(retNode);
         });
 
 

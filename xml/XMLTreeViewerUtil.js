@@ -1,22 +1,12 @@
-// Copyright 2014 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
+window.XMLTreeViewerUtil = (function() {
 
     var documentNode = null;
     var nodeParentPairs = [];
     var tree;
+    var container;
 
-    function prepareWebKitXMLViewer(noStyleMessage)
-    {
-        //var html = createHTMLElement('html');
-        //var head = createHTMLElement('head');
-        //html.appendChild(head);
-        //var style = createHTMLElement('style');
-        //style.id = 'xml-viewer-style';
-        ////style.appendChild(document.createTextNode(xmlTreeViewerCSS));
-        //head.appendChild(style);
-        //var body = createHTMLElement('body');
-        //html.appendChild(body);
+    function prepareWebKitXMLViewer(node) {
+        documentNode = node;
         var body = createHTMLElement('div');
         var sourceXML = createHTMLElement('div');
         sourceXML.id = 'webkit-xml-viewer-source-xml';
@@ -28,28 +18,19 @@
             if (child.nodeType != Node.DOCUMENT_TYPE_NODE)
                 sourceXML.appendChild(child);
         }
-        //documentNode.appendChild(body);
-
-        var header = createHTMLElement('div');
-        body.appendChild(header);
-        header.classList.add('header');
-        var headerSpan = createHTMLElement('span');
-        header.appendChild(headerSpan);
-        headerSpan.textContent = noStyleMessage;
-        header.appendChild(createHTMLElement('br'));
 
         tree = createHTMLElement('div');
         body.appendChild(tree);
         tree.classList.add('pretty-print');
         //window.onload = sourceXMLLoaded;
-        sourceXMLLoaded(body);
-        return body.innerHTML;
+        container = body;
+        sourceXMLLoaded();
+        return body;
     }
 
-    function sourceXMLLoaded(body)
-    {
-        //var sourceXML = document.getElementById('webkit-xml-viewer-source-xml');
-        var sourceXML = body.firstChild;
+    function sourceXMLLoaded() {
+        //var sourceXML = container.getElementById('webkit-xml-viewer-source-xml');
+        var sourceXML = container.firstChild;
         if (!sourceXML)
             return; // Stop if some XML tree extension is already processing this document
 
@@ -66,8 +47,7 @@
 
     // Tree processing.
 
-    function processNode(parentElement, node)
-    {
+    function processNode(parentElement, node) {
         var map = processNode.processorsMap;
         if (!map) {
             map = {};
@@ -82,8 +62,7 @@
             processNode.processorsMap[node.nodeType].call(this, parentElement, node);
     }
 
-    function processElement(parentElement, node)
-    {
+    function processElement(parentElement, node) {
         if (!node.firstChild)
             processEmptyElement(parentElement, node);
         else {
@@ -95,15 +74,13 @@
         }
     }
 
-    function processEmptyElement(parentElement, node)
-    {
+    function processEmptyElement(parentElement, node) {
         var line = createLine();
         line.appendChild(createTag(node, false, true));
         parentElement.appendChild(line);
     }
 
-    function processShortTextOnlyElement(parentElement, node)
-    {
+    function processShortTextOnlyElement(parentElement, node) {
         var line = createLine();
         line.appendChild(createTag(node, false, false));
         for (var child = node.firstChild; child; child = child.nextSibling)
@@ -112,8 +89,7 @@
         parentElement.appendChild(line);
     }
 
-    function processComplexElement(parentElement, node)
-    {
+    function processComplexElement(parentElement, node) {
         var collapsible = createCollapsible();
 
         collapsible.expanded.start.appendChild(createTag(node, false, false));
@@ -127,8 +103,7 @@
         parentElement.appendChild(collapsible);
     }
 
-    function processComment(parentElement, node)
-    {
+    function processComment(parentElement, node) {
         if (isShort(node.nodeValue)) {
             var line = createLine();
             line.appendChild(createComment('<!-- ' + node.nodeValue + ' -->'));
@@ -147,8 +122,7 @@
         }
     }
 
-    function processCDATA(parentElement, node)
-    {
+    function processCDATA(parentElement, node) {
         if (isShort(node.nodeValue)) {
             var line = createLine();
             line.appendChild(createText('<![CDATA[ ' + node.nodeValue + ' ]]>'));
@@ -167,8 +141,7 @@
         }
     }
 
-    function processProcessingInstruction(parentElement, node)
-    {
+    function processProcessingInstruction(parentElement, node) {
         if (isShort(node.nodeValue)) {
             var line = createLine();
             line.appendChild(createComment('<?' + node.nodeName + ' ' + node.nodeValue + '?>'));
@@ -187,32 +160,28 @@
         }
     }
 
-    function processText(parentElement, node)
-    {
+    function processText(parentElement, node) {
         parentElement.appendChild(createText(node.nodeValue));
     }
 
     // Processing utils.
 
-    function trim(value)
-    {
+    function trim(value) {
         return value.replace(/^\s\s*/, '').replace(/\s\s*$/, '');
     }
 
-    function isShort(value)
-    {
+    function isShort(value) {
         return trim(value).length <= 50;
     }
 
     // Tree rendering.
 
-    function createHTMLElement(elementName)
-    {
-        return document.createElementNS('http://www.w3.org/1999/xhtml', elementName)
+    function createHTMLElement(elementName) {
+        //return document.createElementNS('http://www.w3.org/1999/xhtml', elementName);
+        return document.createElement(elementName);
     }
 
-    function createCollapsible()
-    {
+    function createCollapsible() {
         var collapsible = createHTMLElement('div');
         collapsible.classList.add('collapsible');
         collapsible.expanded = createHTMLElement('div');
@@ -241,29 +210,25 @@
         return collapsible;
     }
 
-    function createButton()
-    {
+    function createButton() {
         var button = createHTMLElement('span');
         button.classList.add('button');
         return button;
     }
 
-    function createCollapseButton(str)
-    {
+    function createCollapseButton(str) {
         var button = createButton();
         button.classList.add('collapse-button');
         return button;
     }
 
-    function createExpandButton(str)
-    {
+    function createExpandButton(str) {
         var button = createButton();
         button.classList.add('expand-button');
         return button;
     }
 
-    function createComment(commentString)
-    {
+    function createComment(commentString) {
         var comment = createHTMLElement('span');
         comment.classList.add('comment');
         comment.classList.add('html-comment');
@@ -271,23 +236,20 @@
         return comment;
     }
 
-    function createText(value)
-    {
+    function createText(value) {
         var text = createHTMLElement('span');
         text.textContent = trim(value);
         text.classList.add('html-text');
         return text;
     }
 
-    function createLine()
-    {
+    function createLine() {
         var line = createHTMLElement('div');
         line.classList.add('line');
         return line;
     }
 
-    function createTag(node, isClosing, isEmpty)
-    {
+    function createTag(node, isClosing, isEmpty) {
         var tag = createHTMLElement('span');
         tag.classList.add('html-tag');
 
@@ -317,8 +279,7 @@
         return tag;
     }
 
-    function createAttribute(attributeNode)
-    {
+    function createAttribute(attributeNode) {
         var attribute = createHTMLElement('span');
         attribute.classList.add('html-attribute');
 
@@ -343,27 +304,22 @@
         return attribute;
     }
 
-    function expandFunction(sectionId)
-    {
-        return function()
-        {
-            document.querySelector('#' + sectionId + ' > .expanded').className = 'expanded';
-            document.querySelector('#' + sectionId + ' > .collapsed').className = 'collapsed hidden';
+    function expandFunction(sectionId) {
+        return function () {
+            container.querySelector('#' + sectionId + ' > .expanded').className = 'expanded';
+            container.querySelector('#' + sectionId + ' > .collapsed').className = 'collapsed hidden';
         };
     }
 
-    function collapseFunction(sectionId)
-    {
-        return function()
-        {
-            document.querySelector('#' + sectionId + ' > .expanded').className = 'expanded hidden';
-            document.querySelector('#' + sectionId + ' > .collapsed').className = 'collapsed';
+    function collapseFunction(sectionId) {
+        return function () {
+            container.querySelector('#' + sectionId + ' > .expanded').className = 'expanded hidden';
+            container.querySelector('#' + sectionId + ' > .collapsed').className = 'collapsed';
         };
     }
 
-    function initButtons()
-    {
-        var sections = document.querySelectorAll('.collapsible');
+    function initButtons() {
+        var sections = container.querySelectorAll('.collapsible');
         for (var i = 0; i < sections.length; i++) {
             var sectionId = 'collapsible' + i;
             sections[i].id = sectionId;
@@ -381,9 +337,12 @@
 
     }
 
-    function handleButtonMouseDown(e)
-    {
+    function handleButtonMouseDown(e) {
         // To prevent selection on double click
         e.preventDefault();
     }
 
+    return {
+        getXMLViewerNode: prepareWebKitXMLViewer
+    }
+})();
