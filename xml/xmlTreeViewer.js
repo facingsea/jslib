@@ -273,7 +273,7 @@
     {
         var text = createHTMLElement('span');
         text.textContent = trim(value);
-        text.classList.add('text');
+        text.classList.add('html-text');
         return text;
     }
 
@@ -292,9 +292,13 @@
         var stringBeforeAttrs = '<';
         if (isClosing)
             stringBeforeAttrs += '/';
-        stringBeforeAttrs += node.nodeName;
+        //stringBeforeAttrs += node.nodeName;
         var textBeforeAttrs = document.createTextNode(stringBeforeAttrs);
         tag.appendChild(textBeforeAttrs);
+        var tagNode = createHTMLElement('span');
+        tagNode.classList.add('html-tag-name');
+        tagNode.textContent = node.nodeName;
+        tag.appendChild(tagNode);
 
         if (!isClosing) {
             for (var i = 0; i < node.attributes.length; i++)
