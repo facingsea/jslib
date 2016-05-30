@@ -2,6 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
+// link: https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/core/xml/DocumentXMLTreeViewer.js&sq=package:chromium&q=xml%20lang:%5Ejavascript$
+
 "use strict";
 
 var xmlTreeViewerCSS = privateScriptController.import("DocumentXMLTreeViewer.css");
